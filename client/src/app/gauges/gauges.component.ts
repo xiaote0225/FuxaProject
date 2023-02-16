@@ -32,6 +32,7 @@ import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
+import { HtmlEchartsLineComponent } from './controls/html-echarts-line/html-echarts-line.component';
 
 @Injectable()
 export class GaugesManager {
@@ -66,7 +67,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent, HtmlEchartsLineComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -197,6 +198,8 @@ export class GaugesManager {
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
             this.setTablePropety(gauge, ga.property);
             this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
+            HtmlEchartsLineComponent.detectChange(ga);
         }
         return false;
     }
@@ -788,6 +791,8 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, isview);
             return true;
+        } else if (ga.type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
+            HtmlEchartsLineComponent.initElement(ga, isview);
         }
     }
 

@@ -161,6 +161,7 @@ import { ScriptModeComponent } from './scripts/script-mode/script-mode.component
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
+import { HtmlEchartsLineComponent } from './gauges/controls/html-echarts-line/html-echarts-line.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -289,7 +290,8 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
-        ReportItemChartComponent
+        ReportItemChartComponent,
+        HtmlEchartsLineComponent
     ],
     imports: [
         BrowserModule,

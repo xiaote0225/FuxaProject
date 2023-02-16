@@ -241,7 +241,7 @@
 .main-btn .to-top {
     display: inline-block;    ;
     height: 34px;
-    width: 34px;    
+    width: 34px;
 }
 
 .main-btn .to-bottom  {
@@ -731,4 +731,7 @@ select#start_marker option[value="D"] {
 }
 .icon-iframe {
     background: url("/assets/images/iframe.svg") no-repeat center center;
+}
+.icon-echarts-line {
+    background: url("/assets/images/echarts-line.svg") no-repeat center center;
 }

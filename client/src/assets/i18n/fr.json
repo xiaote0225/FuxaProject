@@ -375,6 +375,7 @@
   "editor.controls-iframe": "Iframe",
   "editor.controls-iframe-settings": "Paramètres IFRAME",
   "editor.controls-table": "Table",
+  "editor.controls-echarts-line": "Echarts Line",
   "editor.layout-settings": "Paramètres de mise en page",
   "editor.interactivity": "Interactivité",
   "editor.interactivity-id": "identifiant:",
