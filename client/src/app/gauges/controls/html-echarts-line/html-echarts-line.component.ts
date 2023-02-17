@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 
 import { Utils } from '../../../_helpers/utils';
 import { GaugeSettings } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { GaugeBaseComponent } from './../../gauge-base/gauge-base.component';
+import { LineComponent } from './line/line.component';
 
 @Component({
     selector: 'app-html-echarts-line',
@@ -24,14 +25,17 @@ export class HtmlEchartsLineComponent extends GaugeBaseComponent {
         return GaugeDialogType.EchartsLine;
     }
 
-    static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
+    static initElement(gaugeSettings: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
             let svgEchartsLineContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgEchartsLineContainer) {
+                let factory = resolver.resolveComponentFactory(LineComponent);
+                const componentRef = viewContainerRef.createComponent(factory);
                 svgEchartsLineContainer.innerHTML = '';
-                let iframe = document.createElement('div');
-                iframe.innerHTML = 'cyaiDiv';
+                componentRef.changeDetectorRef.detectChanges();
+                // let iframe = document.createElement('div');
+                // iframe.innerHTML = 'cyaiDiv';
                 // iframe.style['width'] = '100%';
                 // iframe.style['height'] = '100%';
                 // iframe.style['border'] = 'none';
@@ -40,12 +44,14 @@ export class HtmlEchartsLineComponent extends GaugeBaseComponent {
                 // if (gaugeSettings.property.address) {
                 //     iframe.setAttribute('src', gaugeSettings.property.address);
                 // }
-                svgEchartsLineContainer.appendChild(iframe);
+                svgEchartsLineContainer.appendChild(componentRef.location.nativeElement);
+                componentRef.instance['myComRef'] = componentRef;
+                return componentRef.instance;
             }
         }
     }
 
-    static detectChange(gab: GaugeSettings): void {
-        return HtmlEchartsLineComponent.initElement(gab, false);
+    static detectChange(gab: GaugeSettings, res: any, ref: any) {
+        return HtmlEchartsLineComponent.initElement(gab, res, ref, false);
     }
 }

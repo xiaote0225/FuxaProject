@@ -1,0 +1,17 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-charts-line-settings' | translate}}
+    </div>
+    <div class="iframe-selection">
+        <div class="element-property-header">
+            <span>{{'Echarts-line.property' | translate}}</span>
+        </div>
+        <div class="_section-newline">
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'Echarts-line.title' | translate}}</span>
+                <input [(ngModel)]="options.title.text" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="section-newline"></div>
+        </div>
+    </div>
+</div>

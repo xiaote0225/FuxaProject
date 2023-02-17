@@ -162,6 +162,9 @@ import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
 import { HtmlEchartsLineComponent } from './gauges/controls/html-echarts-line/html-echarts-line.component';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { LineComponent } from './gauges/controls/html-echarts-line/line/line.component';
+import { LinePropertyComponent } from './gauges/controls/html-echarts-line/line/line-property/line-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -291,7 +294,9 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
         ReportItemChartComponent,
-        HtmlEchartsLineComponent
+        HtmlEchartsLineComponent,
+        LineComponent,
+        LinePropertyComponent
     ],
     imports: [
         BrowserModule,
@@ -320,7 +325,15 @@ export function createTranslateLoader(http: HttpClient) {
         ChartsModule,
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
-        FrameworkModule
+        FrameworkModule,
+        NgxEchartsModule.forRoot({
+            /**
+             * This will import all modules from echarts.
+             * If you only need custom modules,
+             * please refer to [Custom Build] section.
+             */
+            echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
+        })
     ],
     providers: [
         // providersResourceService,

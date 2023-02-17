@@ -28,6 +28,9 @@
         <div *ngSwitchCase="gaugeDialogType.Table">
             <app-table-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-table-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.EchartsLine">
+            <app-line-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-line-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">

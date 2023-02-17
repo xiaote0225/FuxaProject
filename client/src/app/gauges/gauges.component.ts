@@ -33,6 +33,7 @@ import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.componen
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { HtmlEchartsLineComponent } from './controls/html-echarts-line/html-echarts-line.component';
+import { LineComponent } from './controls/html-echarts-line/line/line.component';
 
 @Injectable()
 export class GaugesManager {
@@ -199,7 +200,10 @@ export class GaugesManager {
             this.setTablePropety(gauge, ga.property);
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
-            HtmlEchartsLineComponent.detectChange(ga);
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlEchartsLineComponent.detectChange(ga, res, ref);
+            this.setEchartsLinePropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
         }
         return false;
     }
@@ -701,6 +705,8 @@ export class GaugesManager {
             return 'output_';
         } else if (type.startsWith(HtmlTableComponent.TypeTag)) {
             return 'table_';
+        } else if (type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
+            return 'echarts-line_';
         }
         return 'shape_';
     }
@@ -792,7 +798,13 @@ export class GaugesManager {
             HtmlIframeComponent.initElement(ga, isview);
             return true;
         } else if (ga.type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
-            HtmlEchartsLineComponent.initElement(ga, isview);
+            HtmlEchartsLineComponent.detectChange(ga, res, ref);
+            let gauge: LineComponent = HtmlEchartsLineComponent.initElement(ga, res, ref, isview);
+            if (gauge) {
+                this.setEchartsLinePropety(gauge, ga.property);
+                this.mapGauges[ga.id] = gauge;
+            }
+            return gauge;
         }
     }
 
@@ -837,6 +849,12 @@ export class GaugesManager {
             if (property.options) {
                 gauge.setOptions(property.options);
             }
+        }
+    }
+
+    private setEchartsLinePropety(gauge: LineComponent, property: any) {
+        if (property) {
+            gauge.setOptions(property);
         }
     }
 
