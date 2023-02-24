@@ -886,6 +886,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     //#region View Events (Add/Rename/Delete/...)
+    //增加view视图
     onAddDoc() {
         let exist = this.hmi.views.map((v) => v.name);
         let dialogRef = this.dialog.open(DialogNewDoc, {
@@ -905,6 +906,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     addView(name?: string, type?: ViewType): string {
         if (this.hmi.views) {
+            //往hmi对象对应的views中增加对象数据
             let nn = 'View_';
             let idx = 1;
             for (idx = 1; idx < this.hmi.views.length + 2; idx++) {
@@ -933,7 +935,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             v.id = 'v_' + Utils.getShortGUID();
             this.hmi.views.push(v);
+            //1.将view存储到服务器
+            //2.将view设置为currentView并存储在localStorage
+            //3.在当前的画布区域将当前的view渲染出来
             this.onSelectView(v);
+            //将view存储到服务器
             this.saveView(this.currentView);
             return v.id;
         }

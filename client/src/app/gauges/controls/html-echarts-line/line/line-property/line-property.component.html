@@ -11,6 +11,14 @@
                 <span>{{'Echarts-line.title' | translate}}</span>
                 <input [(ngModel)]="options.title.text" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
             </div>
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'Echarts-line.url' | translate}}</span>
+                <input [(ngModel)]="options.url" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'Echarts-line.polling' | translate}}</span>
+                <input [(ngModel)]="options.polling" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
             <div class="section-newline"></div>
         </div>
     </div>

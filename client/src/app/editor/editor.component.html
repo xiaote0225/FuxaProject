@@ -1,7 +1,9 @@
-﻿<div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
+﻿<!--Load the hmi resource 加载条  -->
+<div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
+<!-- 右侧抽屉：画布区域的shape和组件对应的列表 -->
 <mat-drawer #svgSelectorPanel class="editor-sidenav" mode="side" position="end">
     <button mat-icon-button (click)="svgSelectorPanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
@@ -11,6 +13,7 @@
     </button>
     <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
 </mat-drawer>
+<!-- 右侧抽屉：自定义control对应的右侧property抽屉  自定义参数配置面板 -->
 <mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end">
     <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
@@ -34,6 +37,7 @@
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
+    <!-- 整个editor页面的视图布局 -->
     <mat-drawer-container class="svg-workarea-container">
         <!-- LEFT BAR -->
         <mat-drawer mode="side" opened="true" class="svg-sidenav leave-header-area" disableClose>
@@ -53,10 +57,12 @@
                         <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()"
                             (change)="onViewFileChangeListener($event)" accept=".json" />
                     </mat-expansion-panel-header>
+                    <!-- Views视图展示区域，功能：删除、重命名、参数设置、clone、导出 -->
                     <div class="leftbar-panel view-panel">
                         <div *ngIf="hmi.views && hmi.views.length <= 0">
                             <br>
                         </div>
+                        <!-- 选中指定的view 进行viwe中组件和shape的渲染 -->
                         <div *ngFor="let item of getViewsSorted()" (click)="onSelectView(item)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
                             class="leftbar-item mycursor-pointer">
                             <mat-icon *ngIf="!item.type || item.type === svgViewType" matTooltip="{{'editor.view-svg' | translate}}" class="leftbar-item-type">
@@ -78,6 +84,7 @@
                     </div>
                 </mat-expansion-panel>
                 <div *ngIf="editorMode === editorModeType.SVG">
+                    <!-- 常用的图形 -->
                     <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelGeneral=true;savePanelState()"
                         (closed)="panelsState.panelGeneral=false;savePanelState()" hideToggle="true" [expanded]="panelsState.panelGeneral">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
@@ -236,7 +243,7 @@
         <mat-drawer-content>
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
-                <!-- RIGHT BAR -->
+                <!-- RIGHT BAR  右侧抽屉： 选中单个shape或control对应的通用property-->
                 <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' ">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
@@ -622,6 +629,7 @@
                                 <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->
                             </mat-panel-title>
                         </mat-expansion-panel-header>
+                        <!-- 针对自定义control的property按钮 -->
                         <div class="rightbar_panel">
                             <gauge-base #gaugepanel *ngIf="selectedElement" [settings]=getGaugeSettings(selectedElement) (edit)="onGaugeEdit($event)"></gauge-base>
                         </div>
@@ -645,24 +653,27 @@
                         </div>
                     </div>
                     <!-- END Rules bar -->
-                    <!-- Draw Area -->
+                    <!-- Draw Area 核心画布渲染区域-->
                     <div id="workarea">
                         <style id="styleoverrides" type="text/css" media="screen" scoped="scoped"></style>
                         <div id="svgcanvas" style="position:relative">
                         </div>
                     </div>
                     <!-- END Draw Area -->
-                    <!-- Draw top tool bar -->
+                    <!-- Draw top tool bar 画布头部对应的按钮区域-->
                     <div id="tools_top" class="tools_panel">
                         <div id="editor_panel">
                             <div class="main-btn-sep"></div>
+                            <!-- 播放按钮：当前编辑页面用打开的新页面进行展示 -->
                             <button mat-button matTooltip="{{'editor.tools-launch-title' | translate}}" class="main-btn" (click)="onStartCurrent()">
                                 <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
                             </button>
                             <div class="main-btn-sep"></div>
+                            <!-- 画布区域放大缩小按钮 -->
                             <button mat-button matTooltip="{{'editor.tools-zoom-title' | translate}}" class="main-btn" (click)="onZoomSelect()">
                                 <mat-icon aria-label="Zoom Tool [Ctrl+Up/Down]">zoom_in</mat-icon>
                             </button>
+                            <!-- 展示画布的网格线 -->
                             <button mat-button matTooltip="{{'editor.tools-grid-title' | translate}}" class="main-btn" (click)="onShowGrid()">
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="!gridOn">grid_on</mat-icon>
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="gridOn">grid_off</mat-icon>
@@ -678,15 +689,19 @@
                         </div>
                         <div id="selected_panel">
                             <div class="main-btn-sep"></div>
+                            <!-- 选中组件的复制 -->
                             <button mat-button id="tool_clone" matTooltip="{{'editor.tools-clone-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Duplicate Element [D]">content_copy</mat-icon>
                             </button>
+                            <!-- 选中组件的剪切 -->
                             <button mat-button id="tool_delete" matTooltip="{{'editor.tools-delete-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Delete Element [Delete/Backspace]">content_cut</mat-icon>
                             </button>
+                            <!-- 选中组件放在前面 -->
                             <button mat-button id="tool_move_bottom" matTooltip="{{'editor.tools-movebottom-title' | translate}}" class="main-btn">
                                 <mat-icon style="font-size: 28px;">low_priority</mat-icon>
                             </button>
+                            <!-- 选中组件放在后面 -->
                             <button mat-button id="tool_move_top" matTooltip="{{'editor.tools-movetop-title' | translate}}" class="main-btn">
                                 <mat-icon style="font-size: 28px;transform: scaleX(-1) scaleY(-1) translateX(-28px) translateY(-27px);">low_priority</mat-icon>
                             </button>
@@ -696,30 +711,39 @@
                         </div>
                         <div id="multiselected_panel">
                             <div class="main-btn-sep"></div>
+                            <!-- 多选组件的复制 -->
                             <button mat-button id="tool_clone_multi" matTooltip="{{'editor.tools-clonemulti-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Clone Elements [C]">content_copy</mat-icon>
                             </button>
+                            <!-- 多选组件的剪切 -->
                             <button mat-button id="tool_delete_multi" matTooltip="{{'editor.tools-deletemulti-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Delete Selected Elements [Delete/Backspace]">content_cut</mat-icon>
                             </button>
+                            <!-- 多选组件的合并组 -->
                             <button mat-button id="tool_group_elements" matTooltip="{{'editor.tools-group-title' | translate}}" class="main-btn">
                                 <span class="group"></span>
                             </button>
+                            <!-- 多选组件的左对齐 -->
                             <button mat-button id="tool_alignleft" matTooltip="{{'editor.tools-alignleft-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_left</mat-icon>
                             </button>
+                            <!-- 多选组件的居中对齐 -->
                             <button mat-button id="tool_aligncenter" matTooltip="{{'editor.tools-aligncenter-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_center</mat-icon>
                             </button>
+                            <!-- 多选组件的右侧对齐 -->
                             <button mat-button id="tool_alignright" matTooltip="{{'editor.tools-alignright-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_right</mat-icon>
                             </button>
+                            <!-- 多选组件的顶部对齐 -->
                             <button mat-button id="tool_aligntop" matTooltip="{{'editor.tools-aligntop-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_top</mat-icon>
                             </button>
+                            <!-- 多选组件的居中对齐 -->
                             <button mat-button id="tool_alignmiddle" matTooltip="{{'editor.tools-alignmiddle-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_center</mat-icon>
                             </button>
+                            <!-- 多选组件的底部对齐 -->
                             <button mat-button id="tool_alignbottom" matTooltip="{{'editor.tools-alignbottom-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_bottom</mat-icon>
                             </button>
@@ -737,6 +761,7 @@
                                 <span class="ungroup"></span>
                             </button>
                         </div>
+                        <!-- 展示画布上的shape和control列表 -->
                         <div class="svg-element-selected">
                             <button mat-button matTooltip="{{'editor.tools-svg-selector' | translate}}" (click)="svgSelectorPanel.toggle()" class="main-btn">
                                 <mat-icon style="font-size: 28px;">list</mat-icon>
@@ -1023,7 +1048,7 @@
         </div>
     </div>
 
-    <!-- canvas context menu -->
+    <!-- canvas context menu 右键画布shape或者control对应的右侧弹框 -->
     <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
         <li>
             <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>

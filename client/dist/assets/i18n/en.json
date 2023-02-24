@@ -184,6 +184,9 @@
 
     "Echarts-line.property": "Property",
     "Echarts-line.title": "Title",
+    "Echarts-line.url": "Url",
+    "Echarts-line.polling": "polling",
+
 
 
     "chart.property-data": "Data",

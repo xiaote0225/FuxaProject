@@ -1,6 +1,8 @@
 // import { ChartOptions } from './../../html-chart/chart-uplot/chart-uplot.component';
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { EChartsOption } from 'echarts';
+import { map } from 'rxjs/operators';
+// import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-line',
@@ -15,7 +17,10 @@ export class LineComponent implements OnInit {
     chartOpt: any;
     chartOption = LineComponent.DefaultOptions();
 
-    constructor() { }
+    currentTimeout = null;
+    currentInterval = null;
+
+    constructor(private http: HttpClient) { }
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnChanges(changes: SimpleChanges): void {
       const { lineChartData } = changes;
@@ -35,31 +40,58 @@ export class LineComponent implements OnInit {
     public static DefaultOptions() {
         let chartOption = {
             title: {
-                text: 'xxx',
+                text: '',
                 left: 'center'
             },
             xAxis: {
                 type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                data: []
             },
             yAxis: {
                 type: 'value'
             },
             series: [
                 {
-                    data: [150, 230, 224, 218, 135, 147, 260],
+                    data: [],
                     type: 'line'
                 }
-            ]
+            ],
+            url: '',
+            polling: 3
         };
         return chartOption;
     }
 
-    setOptions(options: EChartsOption): void {
-        setTimeout(() => {
+    setOptions(options: any): void {
+        const {polling,url,title} = options;
+        if(this.currentTimeout){
+            clearTimeout(this.currentTimeout);
+        }
+        this.currentTimeout = setTimeout(() => {
             this.chartOpt.clear();
             this.chartOpt.setOption({...LineComponent.DefaultOptions(),...options}, true);
-        }, 0);
+        }, 10);
+        if(url !== '' && polling != ''){
+            if(this.currentInterval){
+                clearInterval(this.currentInterval);
+            }
+            this.currentInterval = setInterval(() => {
+                this.chartOpt.clear();
+                let obj = LineComponent.DefaultOptions();
+                this.getData(url).subscribe(val => {
+                    obj.title.text = title.text;
+                    obj.xAxis.data = val.product1.date;
+                    obj.series[0].data = val.product1.plan;
+                    this.chartOpt.setOption({...obj}, true);
+                });
+            },+(polling + '000'));
+        }
+    }
+
+    getData(url){
+        return this.http.get<any>(url).pipe(
+            map(data => data.data)
+        );
     }
 
 

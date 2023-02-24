@@ -34,7 +34,7 @@ export class LinePropertyComponent implements OnInit {
     }
 
     private _reload() {
-        if (!this.data.settings.propert) {
+        if (!this.data.settings.property) {
             this.data.settings.property = LineComponent.DefaultOptions();
         }
         this.options = this.data.settings.property;
