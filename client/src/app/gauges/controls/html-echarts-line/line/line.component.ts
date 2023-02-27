@@ -1,3 +1,4 @@
+import { ChangeDetectorRef, ViewChild, ElementRef, Renderer2, ViewContainerRef } from '@angular/core';
 // import { ChartOptions } from './../../html-chart/chart-uplot/chart-uplot.component';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
@@ -20,7 +21,10 @@ export class LineComponent implements OnInit {
     currentTimeout = null;
     currentInterval = null;
 
-    constructor(private http: HttpClient) { }
+
+    @ViewChild('lineChartDiv',{static:false}) divTemplate: ElementRef;
+
+    constructor(private http: HttpClient,private cdr: ChangeDetectorRef,private rd2: Renderer2,private viewref: ViewContainerRef) { }
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnChanges(changes: SimpleChanges): void {
       const { lineChartData } = changes;
@@ -34,6 +38,13 @@ export class LineComponent implements OnInit {
       this.chartOpt = event;
       this.chartOpt.clear();
       this.chartOpt.setOption(LineComponent.DefaultOptions(), true);
+    }
+
+    resize(height?, width?) {
+        if (height && width) {
+            this.rd2.setStyle(this.divTemplate.nativeElement,'width',width+'px');
+            this.rd2.setStyle(this.divTemplate.nativeElement,'height',height+'px');
+        }
     }
 
 

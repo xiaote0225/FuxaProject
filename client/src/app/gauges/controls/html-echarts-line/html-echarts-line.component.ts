@@ -45,6 +45,7 @@ export class HtmlEchartsLineComponent extends GaugeBaseComponent {
                 //     iframe.setAttribute('src', gaugeSettings.property.address);
                 // }
                 svgEchartsLineContainer.appendChild(componentRef.location.nativeElement);
+                componentRef.instance.resize(svgEchartsLineContainer.clientHeight, svgEchartsLineContainer.clientWidth);
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }
