@@ -79,21 +79,21 @@ export class LineComponent implements OnInit {
             clearTimeout(this.currentTimeout);
         }
         this.currentTimeout = setTimeout(() => {
-            this.chartOpt.clear();
-            this.chartOpt.setOption({...LineComponent.DefaultOptions(),...options}, true);
+            this.chartOpt?.clear();
+            this.chartOpt?.setOption({...LineComponent.DefaultOptions(),...options}, true);
         }, 10);
         if(url !== '' && polling != ''){
             if(this.currentInterval){
                 clearInterval(this.currentInterval);
             }
             this.currentInterval = setInterval(() => {
-                this.chartOpt.clear();
+                this.chartOpt?.clear();
                 let obj = LineComponent.DefaultOptions();
                 this.getData(url).subscribe(val => {
                     obj.title.text = title.text;
                     obj.xAxis.data = val.product1.date;
                     obj.series[0].data = val.product1.plan;
-                    this.chartOpt.setOption({...obj}, true);
+                    this.chartOpt?.setOption({...obj}, true);
                 });
             },+(polling + '000'));
         }
