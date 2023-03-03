@@ -184,7 +184,8 @@ export enum GaugeDialogType {
     Iframe,
     Table,
     Input,
-    EchartsLine
+    EchartsLine,
+    ReverseControl
 }
 
 @Component({

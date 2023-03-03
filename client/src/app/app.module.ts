@@ -165,6 +165,9 @@ import { HtmlEchartsLineComponent } from './gauges/controls/html-echarts-line/ht
 import { NgxEchartsModule } from 'ngx-echarts';
 import { LineComponent } from './gauges/controls/html-echarts-line/line/line.component';
 import { LinePropertyComponent } from './gauges/controls/html-echarts-line/line/line-property/line-property.component';
+import { HtmlReverseControlComponent } from './gauges/controls/html-reverse-control/html-reverse-control.component';
+import { SwitchComponent } from './gauges/controls/html-reverse-control/switch/switch.component';
+import { SwitchPropertyComponent } from './gauges/controls/html-reverse-control/switch/switch-property/switch-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -296,7 +299,10 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemChartComponent,
         HtmlEchartsLineComponent,
         LineComponent,
-        LinePropertyComponent
+        LinePropertyComponent,
+        HtmlReverseControlComponent,
+        SwitchComponent,
+        SwitchPropertyComponent
     ],
     imports: [
         BrowserModule,

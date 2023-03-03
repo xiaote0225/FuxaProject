@@ -426,7 +426,12 @@
     "editor.controls-table": "Table",
     "editor.controls-echarts-line": "Echarts Line",
 
+    "editor.controls-reverse-control": "Reverse Control",
+    "Reverse-Control.property": "Property",
+    "Reverse-Control.url": "URL",
+
     "editor.layout-settings": "Layout settings",
+
 
     "editor.interactivity": "Interactivity",
     "editor.interactivity-id": "id:",

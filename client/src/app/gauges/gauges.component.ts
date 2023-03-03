@@ -34,6 +34,8 @@ import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { HtmlEchartsLineComponent } from './controls/html-echarts-line/html-echarts-line.component';
 import { LineComponent } from './controls/html-echarts-line/line/line.component';
+import { HtmlReverseControlComponent } from './controls/html-reverse-control/html-reverse-control.component';
+import { SwitchComponent } from './controls/html-reverse-control/switch/switch.component';
 
 @Injectable()
 export class GaugesManager {
@@ -68,7 +70,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent, HtmlEchartsLineComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent, HtmlEchartsLineComponent,HtmlReverseControlComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -203,6 +205,12 @@ export class GaugesManager {
             delete this.mapGauges[ga.id];
             let gauge = HtmlEchartsLineComponent.detectChange(ga, res, ref);
             this.setEchartsLinePropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlReverseControlComponent.TypeTag)) {
+            // HtmlReverseControlComponent.detectChange(ga);
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlReverseControlComponent.detectChange(ga, res, ref);
+            this.setReverseControlPropety(gauge, ga.property);
             this.mapGauges[ga.id] = gauge;
         }
         return false;
@@ -707,6 +715,8 @@ export class GaugesManager {
             return 'table_';
         } else if (type.startsWith(HtmlEchartsLineComponent.TypeTag)) {
             return 'echarts-line_';
+        } else if (type.startsWith(HtmlReverseControlComponent.TypeTag)) {
+            return 'reverse-control_';
         }
         return 'shape_';
     }
@@ -805,6 +815,14 @@ export class GaugesManager {
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
+        } else if (ga.type.startsWith(HtmlReverseControlComponent.TypeTag)) {
+            HtmlReverseControlComponent.detectChange(ga, res, ref);
+            let gauge: SwitchComponent = HtmlReverseControlComponent.initElement(ga, res, ref, isview);
+            if (gauge) {
+                this.setReverseControlPropety(gauge, ga.property);
+                this.mapGauges[ga.id] = gauge;
+            }
+            return gauge;
         }
     }
 
@@ -853,6 +871,13 @@ export class GaugesManager {
     }
 
     private setEchartsLinePropety(gauge: LineComponent, property: any) {
+        if (property) {
+            gauge.setOptions(property);
+        }
+    }
+
+
+    private setReverseControlPropety(gauge: SwitchComponent, property: any) {
         if (property) {
             gauge.setOptions(property);
         }

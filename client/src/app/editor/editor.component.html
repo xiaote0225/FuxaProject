@@ -34,6 +34,9 @@
         <div *ngSwitchCase="gaugeDialogType.EchartsLine">
             <app-line-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-line-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.ReverseControl">
+            <app-switch-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-switch-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -204,6 +207,10 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-echarts-line' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-echarts-line')}"
                                 (click)="setMode('own_ctrl-echarts-line')">
                                 <span class="icon-tool icon-echarts-line"></span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-reverse-control' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-reverse-control')}"
+                                (click)="setMode('own_ctrl-reverse-control')">
+                                <span class="icon-tool icon-switch"></span>
                             </div>
                         </div>
                     </mat-expansion-panel>
