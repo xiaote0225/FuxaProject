@@ -168,6 +168,7 @@ import { LinePropertyComponent } from './gauges/controls/html-echarts-line/line/
 import { HtmlReverseControlComponent } from './gauges/controls/html-reverse-control/html-reverse-control.component';
 import { SwitchComponent } from './gauges/controls/html-reverse-control/switch/switch.component';
 import { SwitchPropertyComponent } from './gauges/controls/html-reverse-control/switch/switch-property/switch-property.component';
+import { DynamicViewComponentComponent } from './dynamic-view-component/dynamic-view-component.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -302,7 +303,8 @@ export function createTranslateLoader(http: HttpClient) {
         LinePropertyComponent,
         HtmlReverseControlComponent,
         SwitchComponent,
-        SwitchPropertyComponent
+        SwitchPropertyComponent,
+        DynamicViewComponentComponent
     ],
     imports: [
         BrowserModule,

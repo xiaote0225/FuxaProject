@@ -8,7 +8,7 @@
 	</mat-sidenav>
 	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
 		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
-			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" 
+			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'"
 				(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
 				<mat-icon aria-label="Menu">menu</mat-icon>
 			</button>
