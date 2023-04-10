@@ -24,6 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
+import { takeUntil } from 'rxjs/operators';
 // declare var panzoom: any;
 
 @Component({
@@ -57,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
-
+    serverErrorBanner = false;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
 
@@ -92,6 +93,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
+            });
+            this.hmiService.onServerConnection$.pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(status => {
+                this.serverErrorBanner = !status;
             });
         }
         catch (err) {
@@ -134,7 +140,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (viewId !== this.homeView.id || force) {
+        } else if (this.homeView && viewId !== this.homeView.id || force || !this.homeView) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -172,6 +178,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setIframe(link: string = null) {
+        this.homeView = null;
         let currentLink: string;
         this.iframes.forEach(iframe => {
             if (!iframe.hide) {

@@ -25,7 +25,7 @@ import { SliderComponent } from './controls/slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Utils } from '../_helpers/utils';
-import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
+import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
@@ -36,6 +36,7 @@ import { HtmlEchartsLineComponent } from './controls/html-echarts-line/html-echa
 import { LineComponent } from './controls/html-echarts-line/line/line.component';
 import { HtmlReverseControlComponent } from './controls/html-reverse-control/html-reverse-control.component';
 import { SwitchComponent } from './controls/html-reverse-control/switch/switch.component';
+import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 
 @Injectable()
 export class GaugesManager {
@@ -120,7 +121,8 @@ export class GaugesManager {
 
     createGaugeStatus(ga: GaugeSettings): GaugeStatus {
         let result = new GaugeStatus();
-        if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+        if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag) &&
+            !ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             result.onlyChange = true;
         }
         if (ga.type.startsWith(SliderComponent.TypeTag)) {
@@ -558,10 +560,12 @@ export class GaugesManager {
             if (currentValue === null || currentValue === undefined){
                 return;
             } else {
-                if (currentValue === 0) {
+                if (currentValue === 0 || currentValue === '0') {
                     this.putSignalValue(sigid, '1');
-                } else if (currentValue === 1) {
+                } else if (currentValue === 1 || currentValue === '1') {
                     this.putSignalValue(sigid, '0');
+                } else if (currentValue === 'false') {
+                    this.putSignalValue(sigid, 'true');
                 } else {
                     this.putSignalValue(sigid, String(!currentValue));
                 }
@@ -902,6 +906,14 @@ export class GaugesManager {
      */
     clearMemory() {
         this.memorySigGauges = {};
+    }
+
+    /**
+     *
+     * @returns list of signals id (tag) that are binded to a gauge
+     */
+    getBindedSignalsId() {
+        return Object.keys(this.memorySigGauges);
     }
 }
 

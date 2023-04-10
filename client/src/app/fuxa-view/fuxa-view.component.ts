@@ -17,7 +17,6 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
-import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
@@ -25,6 +24,7 @@ import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.com
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
+import { HmiService } from '../_services/hmi.service';
 
 declare var SVG: any;
 
@@ -67,12 +67,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected plainVariableMapping: any = {};
     private subscriptionLoad: Subscription;
 
-    constructor(private el: ElementRef,
+    constructor(
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private scriptService: ScriptService,
         private projectService: ProjectService,
+        private hmiService: HmiService,
         private resolver: ComponentFactoryResolver) {
     }
 
@@ -90,7 +91,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.loadHmi(this.view);
-
         /* check if already loaded */
         if (this.projectService.getHmi()) {
             this.projectService.initScheduledScripts();
@@ -197,7 +197,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadWatch(view: View) {
         if (view && view.items) {
             let items = this.applyVariableMapping(view.items);
-            // this.gaugesManager.initGaugesMap();
             for (let key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
@@ -233,8 +232,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         }
                     }
-
-
                 } catch (err) {
                     console.error('loadWatch: ' + err);
                 }
@@ -251,11 +248,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     value: this.staticValues[variableId]
                 });
             }
+            // set subscription to server
+            this.hmiService.tagsSubscribe(this.gaugesManager.getBindedSignalsId());
         }
     }
 
     protected handleSignal(sig) {
-        if (!isUndefined(sig.value)) {
+        if (sig.value !== undefined) {
             try {
                 // take all gauges settings binded to the signal id in this view
                 let gas = this.gaugesManager.getGaugeSettings(this.id, sig.id);

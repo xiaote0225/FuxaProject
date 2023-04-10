@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
-    "module": "esnext",
-    "target": "es5",
+    "module": "commonjs",
+    "target": "es2020",
     "types": [
       "jasmine",
       "node"

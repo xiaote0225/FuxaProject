@@ -10,6 +10,7 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class HmiService {
@@ -26,6 +27,8 @@ export class HmiService {
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
+
+    onServerConnection$ = new BehaviorSubject<boolean>(false);
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -74,13 +77,13 @@ export class HmiService {
                     this.variables[sigId]['source'] = device.id;
                 }
                 if (device?.type === DeviceType.internal) {
+                    this.variables[sigId].timestamp = new Date().getTime();
                     this.setSignalValue(this.variables[sigId]);
                 } else {
                     this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
                 }
             } else if (this.bridge) {
                 this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
-                // this.setSignalValue(this.variables[sigId], fnc);
             } else if (!environment.serverEnabled) {
                 // for demo, only frontend
                 this.setSignalValue(this.variables[sigId]);
@@ -150,6 +153,12 @@ export class HmiService {
         // check to init socket io
         if (!this.socket) {
             this.socket = io(this.endPointConfig);
+            this.socket.on('connect', () => {
+                this.onServerConnection$.next(true);
+            });
+            this.socket.on('disconnect', () => {
+                this.onServerConnection$.next(false);
+            });
             // devicse status
             this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
                 this.onDeviceChanged.emit(message);
@@ -252,7 +261,7 @@ export class HmiService {
     /**
      * Ask device tags settings
      */
-     public askDeviceTags(deviceId: string) {
+    public askDeviceTags(deviceId: string) {
         if (this.socket) {
             let msg = { deviceId: deviceId };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_REQUEST, msg);
@@ -323,6 +332,25 @@ export class HmiService {
         }
     }
 
+    /**
+     * Subscribe to tags values
+     */
+    public tagsSubscribe(tagsId: string[]) {
+        if (this.socket) {
+            let msg = { tagsId: tagsId };
+            this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
+        }
+    }
+
+    /**
+     * Unsubscribe to tags values
+     */
+    public tagsUnsubscribe(tagsId: string[]) {
+        if (this.socket) {
+            let msg = { tagsId: tagsId };
+            this.socket.emit(IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE, msg);
+        }
+    }
     //#endregion
 
     //#region Signals Gauges Mapping
@@ -557,6 +585,8 @@ export enum IoEventTypes {
     DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
     DEVICE_TAGS_REQUEST = 'device-tags-request',
+    DEVICE_TAGS_SUBSCRIBE = 'device-tags-subscribe',
+    DEVICE_TAGS_UNSUBSCRIBE = 'device-tags-unsubscribe',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',
